@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import webbrowser
 
 class TodoApp:
     def __init__(self, root):
@@ -17,8 +18,23 @@ class TodoApp:
         self.task_listbox = tk.Listbox(root, selectmode=tk.SINGLE, width=30)
         self.task_listbox.pack(pady=10)
 
+        self.scrollbar = tk.Scrollbar(root, command=self.task_listbox.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.task_listbox.config(yscrollcommand=self.scrollbar.set)
+
         self.remove_button = tk.Button(root, text="Remove Task", command=self.remove_task)
-        self.remove_button.pack()
+        self.remove_button.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
+
+        github_label = tk.Label(
+            root,
+            text="GitHub",
+            cursor="hand2",  
+            foreground="blue",
+            underline=True
+        )
+        github_label.pack(pady=5)
+        github_label.bind("<Button-1>", lambda event: webbrowser.open("https://github.com/iW3ll"))
 
         self.update_task_list()
 
@@ -44,6 +60,8 @@ class TodoApp:
         for task in self.todo_list:
             self.task_listbox.insert(tk.END, task)
 
+        self.task_listbox.yview(tk.END)
+
     def save_todo_list(self):
         with open("todo_list.txt", "w") as file:
             for task in self.todo_list:
@@ -60,5 +78,6 @@ class TodoApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.minsize(300, 300)
     app = TodoApp(root)
     root.mainloop()
